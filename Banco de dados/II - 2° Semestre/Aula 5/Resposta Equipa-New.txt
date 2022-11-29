@@ -1,0 +1,89 @@
+Use Equipa
+go
+--1.
+Create Table Custo(
+	cd_Forn int not null,
+	cd_Equipamento int not null,
+	vl_Custo money)
+go
+Alter Table Custo
+	Add Constraint PK_Custo
+	Primary Key (cd_Forn,cd_Equipamento)
+go
+Alter Table Custo
+	Add Constraint FK_Equipamento
+	Foreign Key (cd_Equipamento)
+	References Equipamento
+go
+Alter Table Custo
+	Add Constraint FK_Forn
+	Foreign Key (cd_Forn)
+	References Fornecedor
+go
+--2.
+Alter Table Custo
+	Add qt_Equipamento int 
+        Constraint CK_qtEquipamento Check (qt_Equipamento < 20)
+go
+Alter Table Custo
+	Drop Constraint CK_qtEquipamento
+go
+Alter Table Custo
+	Drop Column qt_Equipamento
+go
+--3.
+Exec sp_Rename 'Custo.vl_Custo','vl_Equipamento'
+go
+
+--4.
+Delete Custo
+	Where cd_Forn >= 5 and 
+	      vl_Equipamento > 150 
+go
+--5.
+Update Custo
+	Set vl_Equipamento = vl_Equipamento * 1.138
+	Where vl_Equipamento > 120
+go
+Update Custo
+	Set vl_Equipamento = vl_Equipamento * 1.152
+	Where vl_Equipamento <= 120
+go
+--6.
+Select cd_Equipamento, Count(*) Total
+	From Custo 
+	Group By cd_Equipamento
+	Having Count(*) > 1
+go
+--7.
+Select cd_Forn, avg(vl_Equipamento)
+	From Custo 
+	Group By cd_Forn
+go
+--8.
+Select cd_Equipamento, ds_Equipamento 
+	From Equipamento
+	Where nm_Equipamento Like "% Hard Disk %"
+go
+--9
+Alter table Custo 
+	add Constraint CK_vlEquipamento Check (vl_Equipamento > 100)
+go
+--10
+Alter Table Custo
+	Drop Constraint FK_Equipamento
+go
+Alter Table Custo
+	Drop Constraint FK_Fornecedor
+go
+Alter Table Custo 
+	Drop Constraint PK_Custo
+
+
+
+
+
+
+
+
+

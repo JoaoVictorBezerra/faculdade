@@ -1,0 +1,88 @@
+Use Biblioteca
+go
+
+--1.
+Create Table Autor_Livro(
+	cd_Autor int not null,
+	cd_Livro int not null)
+go
+Alter Table Autor_Livro
+	Add Constraint PK_AutorLivro
+	Primary Key (cd_Autor,cd_Livro)
+go
+Alter Table Autor_Livro
+	Add Constraint FK_Autor
+	Foreign Key (cd_Autor)
+	References Autor
+	On Delete Cascade
+go
+Alter Table Autor_Livro
+	Add Constraint FK_Livro
+	Foreign Key (cd_Livro)
+	References Livro
+	On Delete Cascade
+go
+Insert Into Autor_Livro
+	Values (1,3),
+	       (1,2),
+	       (2,1),
+	       (3,4),
+	       (4,2),
+	       (4,3)
+go
+
+
+--2.
+Alter Table Livro
+	Add qt_Edicao int 
+        Constraint CK_qtEdicao Check (qt_Edicao < 20)
+go
+Alter Table Livro
+	Drop Constraint ck_qtEdicao
+go
+Alter Table Livro
+	Drop Column qt_Edicao
+go
+
+
+--3.
+Exec sp_Rename 'Livro.vl_Livro','vl_VolumeLivro'
+
+
+
+--4.
+Delete Livro
+	Where cd_Livro >= 2 and 
+	      vl_VolumeLivro > 50 and 
+              dt_Lancamento is null
+
+
+--5.
+Update Livro
+	Set vl_VolumeLivro = 0
+	Where dt_Lancamento is null or 
+              vl_VolumeLivro < 5
+
+
+--6.
+Select cd_Livro, Count(*) Contagem
+	From Autor_Livro
+	Group By cd_Livro
+	Having Count(*) > 1
+
+
+--7.
+Select cd_Editora, AVG(vl_VolumeLivro) Media
+	From Livro
+	Where vl_VolumeLivro > 45
+	Group By cd_Editora
+
+
+--8.
+Select L.cd_Livro, L.nm_Titulo, A.ds_Assunto, L.vl_Livro
+	From Livro L inner join Assunto A
+		on L.sg_Assunto = A.sg_Assunto 
+	Where L.vl_Livro <> 0 and A.sg_Assunto in ('D','A')
+	
+
+

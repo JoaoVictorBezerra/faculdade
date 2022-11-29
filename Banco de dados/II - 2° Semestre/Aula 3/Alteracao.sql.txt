@@ -1,0 +1,48 @@
+/* Aumente o preço de vendas dos imóveis em 12% */
+update Imovel
+	set vl_Imovel = vl_Imovel * 1.12
+
+/* Abaixe o preço de venda dos imóveis do vendedor 1 em 5%	*/
+update Imovel
+	set vl_Imovel = vl_Imovel * 0.95
+	where cd_Vendedor = 1
+
+/* Altere o endereço do comprador 3 para R. ANANÁS, 45 e o estado para RJ */
+update comprador
+	set ds_Endereco = 'R. ANANÁS, 45', sg_estado = 'RJ'
+	where cd_Comprador = 3
+	
+/* Altere a oferta do comprador 2 no imóvel 4 para 101.000 */
+update Oferta
+	set vl_Oferta = 111000
+	where cd_Comprador = 2 and cd_imovel = 4
+	
+/* Exclua a oferta do comprador 3 no imóvel 1 */
+delete from Oferta
+	where cd_Comprador = 3 and cd_imovel = 1
+
+/* Altere a tabela de forma a incluir as restrições de integridades, usando PK_Imovel para a restrição da chave primária na tabela Imóvel. */
+Alter Table Oferta
+Drop Constraint [FK__Oferta__cd_Imove__3C69FB99]
+go
+Alter table Imovel
+Drop Constraint [PK__Imovel__54ED318D8BE4FCA1]
+go
+Alter Table imovel
+Add Constraint PK_Imovel Primary Key (cd_Imovel)
+go
+Alter Table oferta
+Add constraint FK_Imovel Foreign Key (cd_Imovel)
+References imovel
+
+/* Adicionar uma coluna qt_Parcelas do tipo número inteiro na tabela Oferta, já criada e essa coluna deve aceitar números maiores que 1, usando o nome CK_qtParcela para a restrição.*/
+
+Alter Table Oferta
+Add qt_Parcelas Int Constraint CK_Parcelas Check (qt_Parcelas > 1)
+
+/* Destrua a coluna qt_Parcelas da tabela Oferta. */
+Alter Table Oferta
+Drop Constraint CK_Parcelas
+go
+Alter Table Oferta
+Drop Column qt_Parcelas

@@ -1,0 +1,67 @@
+                                            
+/*1. Faça uma busca que mostre cd_Imovel, vl_Imovel e nm_Bairro, cujo código do vendedor seja 3.*/
+
+SELECT I.cd_Imovel, I.vl_Imovel, B.nm_Bairro
+	FROM Imovel as I INNER JOIN Bairro as B
+		ON I.cd_Bairro = B.cd_Bairro and
+		   I.cd_Cidade = B.cd_Cidade and
+		   I.sg_Estado = B.sg_Estado
+	WHERE cd_Vendedor = 3
+
+/*2. Faça uma busca que mostre todos os imóveis que tenham ofertas cadastradas.*/
+
+SELECT I.* 
+	FROM Imovel as I INNER JOIN Oferta as O
+		ON I.cd_Imovel = O.cd_Imovel 
+
+/*3. Faça uma busca que mostre todos os imóveis e ofertas mesmo que não haja ofertas cadastradas para o imóvel.*/
+
+SELECT I.* 
+	FROM Imovel as I LEFT JOIN Oferta as O
+		ON I.cd_Imovel = O.cd_Imovel 
+
+/*4. Faça uma busca que mostre todos os compradores e as respectivas ofertas realizadas por eles.*/
+
+SELECT C.nm_Comprador, O.vl_Oferta 
+	FROM Comprador as C INNER JOIN Oferta as O
+		ON C.cd_Comprador = O.cd_Comprador
+
+/*5. Faça a mesma busca, porém acrescentando os compradores que ainda não fizeram ofertas para os imóveis.*/
+
+SELECT C.nm_Comprador, O.vl_Oferta 
+	FROM Comprador as C LEFT JOIN Oferta as O
+		ON C.cd_Comprador = O.cd_Comprador
+	WHERE O.vl_Oferta is null
+
+/*6. Faça uma busca que mostre o endereço do Imóvel, o bairro e nível de preço do imóvel.*/
+
+SELECT I.ds_Endereco, B.nm_Bairro, I.vl_Imovel, F.nm_Faixa
+	FROM Imovel as I, Bairro as B, Faixa_Imovel as F
+	WHERE (I.vl_Imovel between F.vl_Maximo and F.vl_Minimo) and 
+              I.cd_Bairro = B.cd_Bairro and 
+              I.cd_Cidade = B.cd_Cidade and 
+              I.sg_Estado=B.sg_Estado		 
+
+--7. Verifique a diferença de preços entre o maior e o menor imóvel da tabela.
+
+select max(vl_imovel) as maior, min(vl_imovel) as menor, 
+       (max(vl_imovel) - min(vl_imovel)) as diferenca
+   from imovel
+
+
+--8. Mostre o código do vendedor e o menor preço de imóvel dele no cadastro. Exclua da busca os valores de imóveis inferiores a 100 mil.
+
+select cd_vendedor, min(vl_imovel) as minimo 
+   from imovel 
+   where vl_imovel > 100000
+   group by cd_vendedor
+
+
+--9. Mostre o código e o nome do comprador e a média do valor das 
+ofertas e o número de ofertas deste comprador.
+
+Select C.cd_comprador, C.nm_comprador, 
+       AVG(O.vl_oferta) media, count(*) qtde_oferta 
+   From Comprador C inner join Oferta O
+        on C.cd_comprador = O.cd_comprador
+   group by C.cd_comprador, C.nm_comprador
